@@ -61,12 +61,19 @@ const jp: PartialLocaleType = {
   Settings: {
     Title: "設定",
     SubTitle: "設定オプション",
-    Actions: {
-      ClearAll: "すべてのデータをクリア",
-      ResetAll: "すべてのオプションをリセット",
-      Close: "閉じる",
-      ConfirmResetAll: "すべての設定をリセットしてもよろしいですか？",
-      ConfirmClearAll: "すべてのチャットをリセットしてもよろしいですか？",
+    Danger: {
+      Reset: {
+        Title: "設定をリセット",
+        SubTitle: "すべての設定項目をデフォルトにリセットします",
+        Action: "今すぐリセットする",
+        Confirm: "すべての設定項目をリセットしてもよろしいですか？",
+      },
+      Clear: {
+        Title: "データを消去",
+        SubTitle: "すべてのチャット履歴と設定を消去します",
+        Action: "今すぐ消去する",
+        Confirm: "すべてのチャット履歴と設定を消去しますか？",
+      },
     },
     Lang: {
       Name: "Language", // ATTENTION: if you wanna add a new translation, please do not translate this value, leave it as `Language`
@@ -77,7 +84,15 @@ const jp: PartialLocaleType = {
       Title: "フォントサイズ",
       SubTitle: "チャット内容のフォントサイズ",
     },
-
+    InjectSystemPrompts: {
+      Title: "システムプロンプトの挿入",
+      SubTitle:
+        "各リクエストのメッセージリストの先頭に、ChatGPTのシステムプロンプトを強制的に追加します",
+    },
+    InputTemplate: {
+      Title: "入力の前処理",
+      SubTitle: "新規入力がこのテンプレートに埋め込まれます",
+    },
     Update: {
       Version: (x: string) => `現在のバージョン：${x}`,
       IsLatest: "最新バージョンです",
@@ -94,8 +109,10 @@ const jp: PartialLocaleType = {
       SubTitle: "プレビューバブルでマークダウンコンテンツをプレビュー",
     },
     Mask: {
-      Title: "キャラクターページ",
-      SubTitle: "新規チャット作成時にキャラクターページを表示する",
+      Splash: {
+        Title: "キャラクターページ",
+        SubTitle: "新規チャット作成時にキャラクターページを表示する",
+      },
     },
     Prompt: {
       Disable: {
@@ -157,6 +174,10 @@ const jp: PartialLocaleType = {
     PresencePenalty: {
       Title: "トピックの新鮮度 (presence_penalty)",
       SubTitle: "値が大きいほど、新しいトピックへの展開が可能になります。",
+    },
+    FrequencyPenalty: {
+      Title: "話題の頻度 (frequency_penalty)",
+      SubTitle: "値が大きいほど、重複語を低減する可能性が高くなります",
     },
   },
   Store: {
@@ -236,6 +257,12 @@ const jp: PartialLocaleType = {
     Close: "閉じる",
     Create: "新規",
     Edit: "編集",
+  },
+  Exporter: {
+    Model: "モデル",
+    Messages: "メッセージ",
+    Topic: "トピック",
+    Time: "時間",
   },
 };
 
