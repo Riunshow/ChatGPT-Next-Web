@@ -114,7 +114,7 @@ OpenAI 接口代理 URL，如果你手动配置了 openai 接口代理，请填�
 OPENAI_API_KEY=<your api key here>
 
 # 中国大陆用户，可以使用本项目自带的代理进行开发，你也可以自由选择其他代理地址
-BASE_URL=https://chatgpt1.nextweb.fun/api/proxy
+BASE_URL=https://nb.nextweb.fun/api/proxy
 ```
 
 ### 本地开发
@@ -135,8 +135,8 @@ BASE_URL=https://chatgpt1.nextweb.fun/api/proxy
 docker pull yidadaa/chatgpt-next-web
 
 docker run -d -p 3000:3000 \
-   -e OPENAI_API_KEY="sk-xxxx" \
-   -e CODE="页面访问密码" \
+   -e OPENAI_API_KEY=sk-xxxx \
+   -e CODE=页面访问密码 \
    yidadaa/chatgpt-next-web
 ```
 
@@ -144,10 +144,10 @@ docker run -d -p 3000:3000 \
 
 ```shell
 docker run -d -p 3000:3000 \
-   -e OPENAI_API_KEY="sk-xxxx" \
-   -e CODE="页面访问密码" \
+   -e OPENAI_API_KEY=sk-xxxx \
+   -e CODE=页面访问密码 \
    --net=host \
-   -e PROXY_URL="http://127.0.0.1:7890" \
+   -e PROXY_URL=http://127.0.0.1:7890 \
    yidadaa/chatgpt-next-web
 ```
 
