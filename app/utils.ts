@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { showToast } from "./components/ui-lib";
 import Locale from "./locales";
 import { RequestMessage } from "./client/api";
+import { ServiceProvider } from "./constant";
+// import { fetch as tauriFetch, ResponseType } from "@tauri-apps/api/http";
+import { fetch as tauriStreamFetch } from "./utils/stream";
 
 export function trimTopic(topic: string) {
   // Fix an issue where double quotes still show in the Indonesian language
@@ -194,6 +197,7 @@ export function autoGrowTextArea(dom: HTMLTextAreaElement) {
   measureDom.style.width = width + "px";
   measureDom.innerText = dom.value !== "" ? dom.value : "1";
   measureDom.style.fontSize = dom.style.fontSize;
+  measureDom.style.fontFamily = dom.style.fontFamily;
   const endWithEmptyLine = dom.value.endsWith("\n");
   const height = parseFloat(window.getComputedStyle(measureDom).height);
   const singleLineHeight = parseFloat(
@@ -256,11 +260,126 @@ export function isVisionModel(model: string) {
     "gemini-1.5-pro",
     "gemini-1.5-flash",
     "gpt-4o",
+    "gpt-4o-mini",
   ];
   const isGpt4Turbo =
     model.includes("gpt-4-turbo") && !model.includes("preview");
 
   return (
     visionKeywords.some((keyword) => model.includes(keyword)) || isGpt4Turbo
+  );
+}
+
+export function isDalle3(model: string) {
+  return "dall-e-3" === model;
+}
+
+export function showPlugins(provider: ServiceProvider, model: string) {
+  if (
+    provider == ServiceProvider.OpenAI ||
+    provider == ServiceProvider.Azure ||
+    provider == ServiceProvider.Moonshot
+  ) {
+    return true;
+  }
+  if (provider == ServiceProvider.Anthropic && !model.includes("claude-2")) {
+    return true;
+  }
+  return false;
+}
+
+export function fetch(
+  url: string,
+  options?: Record<string, unknown>,
+): Promise<any> {
+  if (window.__TAURI__) {
+    return tauriStreamFetch(url, options);
+  }
+  return window.fetch(url, options);
+}
+
+export function adapter(config: Record<string, unknown>) {
+  const { baseURL, url, params, data: body, ...rest } = config;
+  const path = baseURL ? `${baseURL}${url}` : url;
+  const fetchUrl = params
+    ? `${path}?${new URLSearchParams(params as any).toString()}`
+    : path;
+  return fetch(fetchUrl as string, { ...rest, body }).then((res) => {
+    const { status, headers, statusText } = res;
+    return res
+      .text()
+      .then((data: string) => ({ status, statusText, headers, data }));
+  });
+}
+
+export function safeLocalStorage(): {
+  getItem: (key: string) => string | null;
+  setItem: (key: string, value: string) => void;
+  removeItem: (key: string) => void;
+  clear: () => void;
+} {
+  let storage: Storage | null;
+
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      storage = window.localStorage;
+    } else {
+      storage = null;
+    }
+  } catch (e) {
+    console.error("localStorage is not available:", e);
+    storage = null;
+  }
+
+  return {
+    getItem(key: string): string | null {
+      if (storage) {
+        return storage.getItem(key);
+      } else {
+        console.warn(
+          `Attempted to get item "${key}" from localStorage, but localStorage is not available.`,
+        );
+        return null;
+      }
+    },
+    setItem(key: string, value: string): void {
+      if (storage) {
+        storage.setItem(key, value);
+      } else {
+        console.warn(
+          `Attempted to set item "${key}" in localStorage, but localStorage is not available.`,
+        );
+      }
+    },
+    removeItem(key: string): void {
+      if (storage) {
+        storage.removeItem(key);
+      } else {
+        console.warn(
+          `Attempted to remove item "${key}" from localStorage, but localStorage is not available.`,
+        );
+      }
+    },
+    clear(): void {
+      if (storage) {
+        storage.clear();
+      } else {
+        console.warn(
+          "Attempted to clear localStorage, but localStorage is not available.",
+        );
+      }
+    },
+  };
+}
+
+export function getOperationId(operation: {
+  operationId?: string;
+  method: string;
+  path: string;
+}) {
+  // pattern '^[a-zA-Z0-9_-]+$'
+  return (
+    operation?.operationId ||
+    `${operation.method.toUpperCase()}${operation.path.replaceAll("/", "_")}`
   );
 }
